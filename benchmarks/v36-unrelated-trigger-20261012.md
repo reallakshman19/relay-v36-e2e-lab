@@ -7,3 +7,5 @@ WP4-E03 exact-source revalidation event: unchanged unlinked PR #5, no child evid
 WP5 cold successor proof trigger; independent PR 5 still has no related task evidence. The new trusted workflow runs full v3.6 tests and reconstructs GitHub-only packet without chat context.
 
 WP6 real provider trigger: exercise standalone two-pass task executor and three-pass independent validator from the approved v1.2.1 label and current PR4/PR5 facts. No TASK_EVIDENCE for this unrelated PR.
+
+Exact-head source verification after SKILL.md documents independent WP5/WP6 usage; preserve PR5 unrelated negative and zero-change title replay.
