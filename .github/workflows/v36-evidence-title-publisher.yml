@@ -24,6 +24,8 @@ jobs:
        github.event_name == 'pull_request_target' &&
        (github.event.pull_request.number == 4 || github.event.pull_request.number == 5) &&
        github.event.pull_request.head.repo.full_name == github.repository)
+    env:
+      TARGET_PR: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.number || 4 }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -71,7 +73,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 > preview.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" > preview.json
           python - <<'PY'
           import json
           d=json.load(open("preview.json",encoding="utf-8"))
@@ -88,7 +90,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 --apply --confirm-scope 'reallakshman19/relay-v36-e2e-lab#1' > apply.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" --apply --confirm-scope 'reallakshman19/relay-v36-e2e-lab#1' > apply.json
           python - <<'PY'
           import json
           d=json.load(open("apply.json",encoding="utf-8"))
@@ -104,7 +106,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 > replay.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" > replay.json
           python - <<'PY'
           import json
           d=json.load(open("replay.json",encoding="utf-8"))
