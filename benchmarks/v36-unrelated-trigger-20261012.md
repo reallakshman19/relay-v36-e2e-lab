@@ -3,3 +3,5 @@ GitHub-only falsifier: current child TASK_EVIDENCE references PR #4, not this PR
 Re-test trigger after installing explicit TARGET_PR event routing; PR #5 must become UNATTRIBUTED E0/0.
 
 WP4-E03 exact-source revalidation event: unchanged unlinked PR #5, no child evidence points here. Source Common@0b271f, approved label v1.2.1, plan checks and dry-run no duplicates.
+
+WP5 cold successor proof trigger; independent PR 5 still has no related task evidence. The new trusted workflow runs full v3.6 tests and reconstructs GitHub-only packet without chat context.
