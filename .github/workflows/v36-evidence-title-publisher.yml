@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/848711356aba24eebfce32ce38338e78d310a723"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/b44785c311f5f2f47f668863a28747b1a4f53f04"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/c3198ec204365f1df35549a89e8f9d193a52240a"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -56,7 +56,7 @@ jobs:
             echo "PINNED_OK $destination $got"
           done <<'V36_PINNED_FILES'
           skills/engineering-pr-delivery-v3.6/scripts/lifecycle_v36.py|v36/scripts/lifecycle_v36.py|50e87efbff0198c9582eb457b5182fe001adf9a7
-          skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|cc24874d98b88ff9a8338dbdd947619348a123aa
+          skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|7ccd59463b2b8a59be024fb4b3cc57efda936892
           skills/engineering-pr-delivery-v3.6/scripts/snapshot_v36.py|v36/scripts/snapshot_v36.py|1e428ed5d980b931ea34814c00caf9362b1b10c2
           skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|0d1132cffed950465f736cfc4afcce58aa6f7af9
           skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
