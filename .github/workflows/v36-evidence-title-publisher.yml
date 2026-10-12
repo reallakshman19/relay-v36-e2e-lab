@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/e046d3cff1f1c4c9355ebf4913b2e3e1a3594aea"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/0b271f0748f210ff6bc948f2a164b8ee810f79bc"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/2aa3d4a90f09abac59ac626592de0efa04600be7"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -61,12 +61,49 @@ jobs:
           skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|b0daddb97c3c7b334e9ec58ad76d4996012710d5
           skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
           skills/engineering-pr-delivery-v3.6/tests/test_publisher_v36.py|v36/tests/test_publisher_v36.py|ff79a82c1abeb26f216b057ae319bafbe66af73f
+          skills/engineering-pr-delivery-v3.6/tests/test_decompose_v36.py|v36/tests/test_decompose_v36.py|d29ca5c477ee45839384cb1979603ff5dc94956c
+          skills/engineering-pr-delivery-v3.6/tests/test_lifecycle_v36.py|v36/tests/test_lifecycle_v36.py|b1b91929d7b5bd7f8442c04d819c35fa998732a8
+          skills/engineering-pr-delivery-v3.6/tests/test_snapshot_v36.py|v36/tests/test_snapshot_v36.py|1ecdaf30d29a47aac3165b78e7bd0d2ac739fb88
+          skills/engineering-pr-delivery-v3.6/plans/V36-341-PLAN-02.yaml|v36/plans/V36-341-PLAN-02.yaml|f68630528b9facc25748c5ff02bc2fd630bf30df
+          skills/engineering-pr-delivery-v3.6/SKILL.md|v36/SKILL.md|26eee640d5defef6fbd35d7b7df4996d9741fd4b
           AIM/relay/AIM/V35-LIFECYCLE.yaml|v36/tests/fixtures/relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           AIM/relay/AIM/V35-LIFECYCLE.yaml|relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           V36_PINNED_FILES
       - name: Run pinned independent PR attribution regression suite
         shell: bash
-        run: python -m unittest discover -s v36/tests -p 'test_publisher_v36.py' -v
+        run: python -m unittest discover -s v36/tests -p 'test_*.py' -v
+      - name: Verify v1.2.1 current plans and real lab zero-duplicate dry-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "v36/scripts")
+          from decompose_v36 import load_plan
+          from lifecycle_v36 import load_label
+          label=load_label("relay/AIM/V35-LIFECYCLE.yaml")
+          assert label["version"]=="1.2.1" and label["label_sha"]=="4b90240"
+          common=load_plan("v36/plans/V36-341-PLAN-02.yaml",label)
+          lab=load_plan("v36/plans/V36-1-PLAN-01.yaml",label)
+          assert len(common["tasks"])==7 and common["parent"]=="reallakshman19/Common#341"
+          assert len(lab["tasks"])==2 and lab["parent"]=="reallakshman19/relay-v36-e2e-lab#1"
+          assert "reallakshman19/relay-v36-e2e-lab" in common["tasks"][-1]["acceptance"]
+          assert "relay-v35-e2e-lab" not in common["tasks"][-1]["acceptance"]
+          print("PLAN_V121_OK common=7 lab=2 new_lab_only=True")
+          PY
+          python v36/scripts/decompose_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml > decomposition.json
+          python - <<'PY'
+          import json
+          d=json.load(open("decomposition.json",encoding="utf-8"))
+          assert d["dry_run"] is True and d["already_present"]==2 and d["would_create"]==[],d
+          expected={
+             "V36-1-WP1":"https://github.com/reallakshman19/relay-v36-e2e-lab/issues/2",
+             "V36-1-WP2":"https://github.com/reallakshman19/relay-v36-e2e-lab/issues/3"}
+          assert d["children"]==expected,d["children"]
+          print("LAB_DECOMPOSE_IDEMPOTENT_OK would_create=0 two_expected_child_links=True")
+          PY
       - name: Read-only provider projection preflight
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
