@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/6bc7422fd49a082b3510715fefba8d58ab0f964b"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/848711356aba24eebfce32ce38338e78d310a723"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/c3198ec204365f1df35549a89e8f9d193a52240a"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -55,27 +55,42 @@ jobs:
             fi
             echo "PINNED_OK $destination $got"
           done <<'V36_PINNED_FILES'
-          skills/engineering-pr-delivery-v3.6/scripts/lifecycle_v36.py|v36/scripts/lifecycle_v36.py|129fab4265a1a6dab91dd7387c31e60cda363699
-          skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|a6a9cade2eaed99cc6992cc1de0858585baa39de
-          skills/engineering-pr-delivery-v3.6/scripts/snapshot_v36.py|v36/scripts/snapshot_v36.py|984e32737d5bf1f76a8b4b89065dca31420f54ca
-          skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|b0daddb97c3c7b334e9ec58ad76d4996012710d5
+          skills/engineering-pr-delivery-v3.6/scripts/lifecycle_v36.py|v36/scripts/lifecycle_v36.py|50e87efbff0198c9582eb457b5182fe001adf9a7
+          skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|cc24874d98b88ff9a8338dbdd947619348a123aa
+          skills/engineering-pr-delivery-v3.6/scripts/snapshot_v36.py|v36/scripts/snapshot_v36.py|1e428ed5d980b931ea34814c00caf9362b1b10c2
+          skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|0d1132cffed950465f736cfc4afcce58aa6f7af9
           skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
           skills/engineering-pr-delivery-v3.6/tests/test_publisher_v36.py|v36/tests/test_publisher_v36.py|ff79a82c1abeb26f216b057ae319bafbe66af73f
-          skills/engineering-pr-delivery-v3.6/scripts/successor_v36.py|v36/scripts/successor_v36.py|ae31a6b39f2d37d65b42c93bd5a26541c9f741d2
+          skills/engineering-pr-delivery-v3.6/scripts/successor_v36.py|v36/scripts/successor_v36.py|76e39db649d3bb1f94697ae4b5a5ae2813c92e21
           skills/engineering-pr-delivery-v3.6/tests/test_successor_v36.py|v36/tests/test_successor_v36.py|7c0f706917ff14ab422edd8765729d6f357ee765
-          skills/engineering-pr-delivery-v3.6/scripts/prompt_2pass_v36.py|v36/scripts/prompt_2pass_v36.py|fabe5daa91b14955093ca7e40ec9e157e5de8da8
-          skills/engineering-pr-delivery-v3.6/scripts/prompt_3pass_v36.py|v36/scripts/prompt_3pass_v36.py|d0e1fa723420cf16b17afcdca59d178cc9760abb
+          skills/engineering-pr-delivery-v3.6/scripts/prompt_2pass_v36.py|v36/scripts/prompt_2pass_v36.py|2e2c23609bcec1c01c29d9492ff92859a29dc2f5
+          skills/engineering-pr-delivery-v3.6/scripts/prompt_3pass_v36.py|v36/scripts/prompt_3pass_v36.py|b2fd42bb7e470db274b918fbf648e9e11a29c2bd
           skills/engineering-pr-delivery-v3.6/tests/test_generators_v36.py|v36/tests/test_generators_v36.py|add9795661cbf402414bb96decdaa33979842cda
           skills/engineering-pr-delivery-v3.6/tests/test_decompose_v36.py|v36/tests/test_decompose_v36.py|d29ca5c477ee45839384cb1979603ff5dc94956c
-          skills/engineering-pr-delivery-v3.6/tests/test_lifecycle_v36.py|v36/tests/test_lifecycle_v36.py|b7b7ba7ada97f48e6579f4747466f7316f07bd1b
+          skills/engineering-pr-delivery-v3.6/tests/test_lifecycle_v36.py|v36/tests/test_lifecycle_v36.py|7ca201839e854fc8dde73dcbcc72fdb323332103
           skills/engineering-pr-delivery-v3.6/tests/test_snapshot_v36.py|v36/tests/test_snapshot_v36.py|f41b794a0c7f45f73f7b5cf43dd4ac9cb52fa4e7
           skills/engineering-pr-delivery-v3.6/plans/V36-341-PLAN-02.yaml|v36/plans/V36-341-PLAN-02.yaml|f68630528b9facc25748c5ff02bc2fd630bf30df
-          skills/engineering-pr-delivery-v3.6/SKILL.md|v36/SKILL.md|bfbae0b0c11f9f6d128dcd21c0be85324a0198e8
+          skills/engineering-pr-delivery-v3.6/SKILL.md|v36/SKILL.md|9cc9940f2b070d09f99f921b5bdcab9d760fb344
           AIM/relay/AIM/V32-LIFECYCLE.yaml|relay/AIM/V32-LIFECYCLE.yaml|603e1c408dee41914d85ca1801be56cf9a1bdee1
           AIM/relay/AIM/3DC-XML-CII.yaml|relay/AIM/3DC-XML-CII.yaml|c5feb9b7dd2ff8ddd3e4b8f73fd73f7d19f75347
           AIM/relay/AIM/V35-LIFECYCLE.yaml|v36/tests/fixtures/relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           AIM/relay/AIM/V35-LIFECYCLE.yaml|relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           V36_PINNED_FILES
+      - name: Resolve explicitly selected writable lab from chosen Owner label
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, sys
+          sys.path.insert(0,"v36/scripts")
+          from lifecycle_v36 import load_label,writable_lab
+          label=load_label("relay/AIM/V35-LIFECYCLE.yaml")
+          lab=writable_lab(label)
+          assert lab=="reallakshman19/relay-v36-e2e-lab"
+          with open(os.environ["GITHUB_ENV"],"a",encoding="utf-8") as out:
+              out.write(f"LAB_REPO={lab}\n")
+          print("EXPLICIT_LAB_OK selected_label="+label["work"]+" selected_repo="+lab)
+          PY
       - name: Validate two external work labels with explicit paths (read-only, no lab inference)
         shell: bash
         run: |
@@ -118,7 +133,7 @@ jobs:
           assert "relay-v35-e2e-lab" not in common["tasks"][-1]["acceptance"]
           print("PLAN_V121_OK common=7 lab=2 new_lab_only=True")
           PY
-          python v36/scripts/decompose_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml > decomposition.json
+          python v36/scripts/decompose_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" > decomposition.json
           python - <<'PY'
           import json
           d=json.load(open("decomposition.json",encoding="utf-8"))
@@ -135,7 +150,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/successor_v36.py cold --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 --pr 5 > successor.md
+          python v36/scripts/successor_v36.py cold --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --pr 4 --pr 5 > successor.md
           python - <<'PY'
           from pathlib import Path
           s=Path("successor.md").read_text()
@@ -158,8 +173,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/prompt_2pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --task-id V36-1-WP1 --pr 4 --pr 5 > two-pass.md
-          python v36/scripts/prompt_3pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --task-id V36-1-WP2 --pr 4 --pr 5 > three-pass.md
+          python v36/scripts/prompt_2pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --task-id V36-1-WP1 --pr 4 --pr 5 > two-pass.md
+          python v36/scripts/prompt_3pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --task-id V36-1-WP2 --pr 4 --pr 5 > three-pass.md
           python - <<'PY'
           from pathlib import Path
           a=Path("two-pass.md").read_text()
@@ -179,7 +194,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" > preview.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --pr "$TARGET_PR" > preview.json
           python - <<'PY'
           import json
           d=json.load(open("preview.json",encoding="utf-8"))
@@ -196,7 +211,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" --apply --confirm-scope 'reallakshman19/relay-v36-e2e-lab#1' > apply.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --pr "$TARGET_PR" --apply --confirm-scope "$LAB_REPO#1" > apply.json
           python - <<'PY'
           import json
           d=json.load(open("apply.json",encoding="utf-8"))
@@ -212,7 +227,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr "$TARGET_PR" > replay.json
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --lab "$LAB_REPO" --pr "$TARGET_PR" > replay.json
           python - <<'PY'
           import json
           d=json.load(open("replay.json",encoding="utf-8"))
