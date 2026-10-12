@@ -22,7 +22,7 @@ jobs:
        contains(github.event.comment.body, 'TASK_EVIDENCE v3.6')) ||
       (github.repository == 'reallakshman19/relay-v36-e2e-lab' &&
        github.event_name == 'pull_request_target' &&
-       github.event.pull_request.number == 4 &&
+       (github.event.pull_request.number == 4 || github.event.pull_request.number == 5) &&
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -37,7 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/3bd860e4e9f30a1a9934cb06f2df8b1e5539ee9c"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/e046d3cff1f1c4c9355ebf4913b2e3e1a3594aea"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/2aa3d4a90f09abac59ac626592de0efa04600be7"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -56,10 +56,15 @@ jobs:
           skills/engineering-pr-delivery-v3.6/scripts/lifecycle_v36.py|v36/scripts/lifecycle_v36.py|1e0cf5287e5dbee90b8c63c5f740c8754983d42c
           skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|0edfc51ba0b55907eb706497613a10a2edd3abbc
           skills/engineering-pr-delivery-v3.6/scripts/snapshot_v36.py|v36/scripts/snapshot_v36.py|856517c482dfd49248673c6956046a3d825c28f2
-          skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|fc2f438f92c487e349cf39dc820d42a526f4903f
+          skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|b0daddb97c3c7b334e9ec58ad76d4996012710d5
           skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
+          skills/engineering-pr-delivery-v3.6/tests/test_publisher_v36.py|v36/tests/test_publisher_v36.py|ff79a82c1abeb26f216b057ae319bafbe66af73f
+          AIM/relay/AIM/V35-LIFECYCLE.yaml|v36/tests/fixtures/relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           AIM/relay/AIM/V35-LIFECYCLE.yaml|relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           V36_PINNED_FILES
+      - name: Run pinned independent PR attribution regression suite
+        shell: bash
+        run: python -m unittest discover -s v36/tests -p 'test_publisher_v36.py' -v
       - name: Read-only provider projection preflight
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
