@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/30bf10b6fe91e3650ab55a7595b3b44f6e9225f0"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/1c1bb57710ba9685a6916ac7bea1fd41b2795944"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/2aa3d4a90f09abac59ac626592de0efa04600be7"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -61,8 +61,11 @@ jobs:
           skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|b0daddb97c3c7b334e9ec58ad76d4996012710d5
           skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
           skills/engineering-pr-delivery-v3.6/tests/test_publisher_v36.py|v36/tests/test_publisher_v36.py|ff79a82c1abeb26f216b057ae319bafbe66af73f
-          skills/engineering-pr-delivery-v3.6/scripts/successor_v36.py|v36/scripts/successor_v36.py|2409cf5f22a170b19be7afb51c8259893ae755c9
+          skills/engineering-pr-delivery-v3.6/scripts/successor_v36.py|v36/scripts/successor_v36.py|ae31a6b39f2d37d65b42c93bd5a26541c9f741d2
           skills/engineering-pr-delivery-v3.6/tests/test_successor_v36.py|v36/tests/test_successor_v36.py|080f465de73a895de5c331a791f7a296231435e2
+          skills/engineering-pr-delivery-v3.6/scripts/prompt_2pass_v36.py|v36/scripts/prompt_2pass_v36.py|fabe5daa91b14955093ca7e40ec9e157e5de8da8
+          skills/engineering-pr-delivery-v3.6/scripts/prompt_3pass_v36.py|v36/scripts/prompt_3pass_v36.py|d0e1fa723420cf16b17afcdca59d178cc9760abb
+          skills/engineering-pr-delivery-v3.6/tests/test_generators_v36.py|v36/tests/test_generators_v36.py|add9795661cbf402414bb96decdaa33979842cda
           skills/engineering-pr-delivery-v3.6/tests/test_decompose_v36.py|v36/tests/test_decompose_v36.py|d29ca5c477ee45839384cb1979603ff5dc94956c
           skills/engineering-pr-delivery-v3.6/tests/test_lifecycle_v36.py|v36/tests/test_lifecycle_v36.py|b1b91929d7b5bd7f8442c04d819c35fa998732a8
           skills/engineering-pr-delivery-v3.6/tests/test_snapshot_v36.py|v36/tests/test_snapshot_v36.py|1ecdaf30d29a47aac3165b78e7bd0d2ac739fb88
@@ -129,6 +132,27 @@ jobs:
           python v36/scripts/successor_v36.py buddy --phase 1a --handover-id V36-341-20261012 --parent 'reallakshman19/relay-v36-e2e-lab#1' --assessed-sha 61a71a038cca56507040bdb365edf76a9c0d2469 > buddy1a.md
           grep -q 'EXECUTION=HOLD' buddy1a.md
           echo "BUDDY_V16_1A_OK no_execution=True"
+      - name: Verify TWO separate generators with live GitHub source and independent oracles
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python v36/scripts/prompt_2pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --task-id V36-1-WP1 --pr 4 --pr 5 > two-pass.md
+          python v36/scripts/prompt_3pass_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --task-id V36-1-WP2 --pr 4 --pr 5 > three-pass.md
+          python - <<'PY'
+          from pathlib import Path
+          a=Path("two-pass.md").read_text()
+          b=Path("three-pass.md").read_text()
+          assert "V36_TWO_PASS_EXECUTION_GENERATOR_V1" in a and "V36_THREE_PASS_INDEPENDENT_VALIDATION_GENERATOR_V1" in b
+          assert a.count("PASS 1 —")==1 and a.count("PASS 2 —")==1 and "PASS 3 —" not in a
+          assert all(b.count(f"PASS {n} —")==1 for n in range(1,4))
+          assert "distinct evaluator" in b and "negative/falsifying" in b
+          assert "A successor continues from GitHub alone, without chats" in a
+          assert "A successor continues from GitHub alone, without chats" in b
+          assert "61a71a038cca56507040bdb365edf76a9c0d2469" in a+b
+          print("TWO_SEPARATE_GENERATORS_OK live_label=True exact_pr_head=True pass2=2 pass3=3")
+          PY
       - name: Read-only provider projection preflight
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
