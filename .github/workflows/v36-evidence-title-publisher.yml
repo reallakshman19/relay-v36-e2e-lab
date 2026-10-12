@@ -1,0 +1,109 @@
+name: v36-evidence-title-publisher
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, closed]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+concurrency:
+  group: v36-lab-title-publisher
+  cancel-in-progress: false
+jobs:
+  project-titles:
+    # Trusted lab owner events only. No untrusted PR code is ever checked out.
+    if: >-
+      (github.repository == 'reallakshman19/relay-v36-e2e-lab' &&
+       github.event_name == 'issue_comment' &&
+       (github.event.issue.number == 2 || github.event.issue.number == 3) &&
+       github.event.comment.user.login == github.repository_owner &&
+       contains(github.event.comment.body, 'TASK_EVIDENCE v3.6')) ||
+      (github.repository == 'reallakshman19/relay-v36-e2e-lab' &&
+       github.event_name == 'pull_request_target' &&
+       github.event.pull_request.number == 4 &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install isolated v3.6 runtime dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Fetch pinned Common v3.6 code, lab plan and approved Owner label; verify every Git blob
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Never execute code from the submitted PR or untrusted comment.
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/3bd860e4e9f30a1a9934cb06f2df8b1e5539ee9c"
+          AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/2aa3d4a90f09abac59ac626592de0efa04600be7"
+          while IFS='|' read -r source destination expected; do
+            mkdir -p "$(dirname "$destination")"
+            case "$source" in
+              AIM/*) url="$AIM_BASE/${source#AIM/}";;
+              *) url="$CODE_BASE/$source";;
+            esac
+            curl --fail --location --silent --show-error --retry 2 "$url" --output "$destination"
+            got="$(git hash-object "$destination")"
+            if [ "$got" != "$expected" ]; then
+              echo "::error::v3.6 pinned source blob mismatch at $destination ($got)"
+              exit 1
+            fi
+            echo "PINNED_OK $destination $got"
+          done <<'V36_PINNED_FILES'
+          skills/engineering-pr-delivery-v3.6/scripts/lifecycle_v36.py|v36/scripts/lifecycle_v36.py|1e0cf5287e5dbee90b8c63c5f740c8754983d42c
+          skills/engineering-pr-delivery-v3.6/scripts/decompose_v36.py|v36/scripts/decompose_v36.py|0edfc51ba0b55907eb706497613a10a2edd3abbc
+          skills/engineering-pr-delivery-v3.6/scripts/snapshot_v36.py|v36/scripts/snapshot_v36.py|856517c482dfd49248673c6956046a3d825c28f2
+          skills/engineering-pr-delivery-v3.6/scripts/publisher_v36.py|v36/scripts/publisher_v36.py|fc2f438f92c487e349cf39dc820d42a526f4903f
+          skills/engineering-pr-delivery-v3.6/plans/V36-1-PLAN-01.yaml|v36/plans/V36-1-PLAN-01.yaml|e0c0db20e732eda033a06a8cf199b0cd5e245a92
+          AIM/relay/AIM/V35-LIFECYCLE.yaml|relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
+          V36_PINNED_FILES
+      - name: Read-only provider projection preflight
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 > preview.json
+          python - <<'PY'
+          import json
+          d=json.load(open("preview.json",encoding="utf-8"))
+          assert d["projection"]["parent"] == "reallakshman19/relay-v36-e2e-lab#1"
+          assert d["projection"]["total"] == 2
+          assert d["projection"]["accepted_complete"] == 0
+          assert d["write"]["dry_run"] and d["write"]["applied"] == 0
+          print("DRY_RUN_OK", "current_evidence=",d["projection"]["current_evidence"],
+                "planned_changes=",len(d["projection"]["changes"]))
+          PY
+      - name: Apply only exact lab title projection and verify readback
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 --apply --confirm-scope 'reallakshman19/relay-v36-e2e-lab#1' > apply.json
+          python - <<'PY'
+          import json
+          d=json.load(open("apply.json",encoding="utf-8"))
+          assert d["write"]["dry_run"] is False
+          assert d["write"].get("readback_ok") is True
+          assert d["projection"]["accepted_complete"] == 0
+          print("APPLY_READBACK_OK", "applied=",d["write"]["applied"],
+                "current_evidence=",d["projection"]["current_evidence"])
+          PY
+      - name: Idempotence check against fresh live provider reads
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python v36/scripts/publisher_v36.py --label relay/AIM/V35-LIFECYCLE.yaml --plan v36/plans/V36-1-PLAN-01.yaml --pr 4 > replay.json
+          python - <<'PY'
+          import json
+          d=json.load(open("replay.json",encoding="utf-8"))
+          assert d["projection"]["changes"] == [], d["projection"]["changes"]
+          assert d["write"]["applied"] == 0
+          print("IDEMPOTENT_REPLAY_OK", "changes=0")
+          PY
