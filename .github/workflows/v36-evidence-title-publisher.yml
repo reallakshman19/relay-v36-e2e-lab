@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Never execute code from the submitted PR or untrusted comment.
-          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/1c1bb57710ba9685a6916ac7bea1fd41b2795944"
+          CODE_BASE="https://raw.githubusercontent.com/reallakshman19/Common/3e8e372cfba7d136542b5b2b69bd9ecf3d80ad44"
           AIM_BASE="https://raw.githubusercontent.com/reallakshman19/Common/2aa3d4a90f09abac59ac626592de0efa04600be7"
           while IFS='|' read -r source destination expected; do
             mkdir -p "$(dirname "$destination")"
@@ -70,7 +70,7 @@ jobs:
           skills/engineering-pr-delivery-v3.6/tests/test_lifecycle_v36.py|v36/tests/test_lifecycle_v36.py|b1b91929d7b5bd7f8442c04d819c35fa998732a8
           skills/engineering-pr-delivery-v3.6/tests/test_snapshot_v36.py|v36/tests/test_snapshot_v36.py|1ecdaf30d29a47aac3165b78e7bd0d2ac739fb88
           skills/engineering-pr-delivery-v3.6/plans/V36-341-PLAN-02.yaml|v36/plans/V36-341-PLAN-02.yaml|f68630528b9facc25748c5ff02bc2fd630bf30df
-          skills/engineering-pr-delivery-v3.6/SKILL.md|v36/SKILL.md|26eee640d5defef6fbd35d7b7df4996d9741fd4b
+          skills/engineering-pr-delivery-v3.6/SKILL.md|v36/SKILL.md|fd463ffe1261d4fcb13cae4fe7ce89336c21f08c
           AIM/relay/AIM/V35-LIFECYCLE.yaml|v36/tests/fixtures/relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           AIM/relay/AIM/V35-LIFECYCLE.yaml|relay/AIM/V35-LIFECYCLE.yaml|55ae8d15d986aef7492061096e790bf4863789a0
           V36_PINNED_FILES
